@@ -1,6 +1,4 @@
-import object.Direction;
-import object.Tank;
-import object.Wall;
+import object.GameObject;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,11 +11,14 @@ public class GameClient extends JComponent {
 
     private int screenWidth;
     private int screenHeight;
+    private Image background;
+
     private Tank playerTank;
     private List<Tank> enemyTanks = new ArrayList<Tank>();  //敵方坦克
     private List<Wall> walls = new ArrayList<Wall>();  //敵方坦克
-    private Image background;
+    private List<GameObject> objects = new ArrayList<>(); //使用父類別進行集合類型宣告
     private boolean stop;
+
 
     //預設遊戲畫面
     GameClient() {
@@ -44,21 +45,42 @@ public class GameClient extends JComponent {
         }).start();
     }
 
+    public int getScreenWidth() {
+        return screenWidth;
+    }
+
+    public int getScreenHeight() {
+        return screenHeight;
+    }
+
     // 建立一個坦克，設定位置和方向
     public void init() {
-        background= new ImageIcon("assets/images/background.jpg").getImage();
-        playerTank = new Tank(400, 90, Direction.DOWN);
+        background= Tool.getImage("background.jpg");
+        Image[] brickImage = {Tool.getImage("brick.png")};
+        Image[] iTankImage = new Image[8];
+        Image[] eTankImage = new Image[8];
 
+        String[] sub={"U", "D", "L", "R", "RU", "RD", "LU", "LD"};
+
+        for (int i=0; i<iTankImage.length; i++){
+            iTankImage[i] = Tool.getImage("itank"+sub[i]+".png");
+            eTankImage[i] = Tool.getImage("etank"+sub[i]+".png");
+        }
+
+        playerTank = new Tank(400, 90, Direction.DOWN,iTankImage);
+        objects.add(playerTank);
         // 敵方坦克
         for (int i =0; i<3; i++){
             for (int j=0; j<4; j++){
-                enemyTanks.add(new Tank(250+j*100,300+i*100,Direction.UP, true));
+                enemyTanks.add(new Tank(250+j*100,300+i*100,Direction.UP, true, eTankImage));
             }
         }
+        objects.addAll(enemyTanks);
 
-        walls.add(new Wall(180, 150, true, 15));
-        walls.add(new Wall(100, 150, false, 14));
-        walls.add(new Wall(700, 150, false, 14));
+        walls.add(new Wall(180, 150, true, 15,brickImage));
+        walls.add(new Wall(100, 150, false, 14,brickImage));
+        walls.add(new Wall(700, 150, false, 14,brickImage));
+        objects.addAll(walls);
     }
 
     @Override
@@ -68,20 +90,10 @@ public class GameClient extends JComponent {
         g.setColor(Color.BLACK);    // 黑色
         g.fillRect(0, 0, screenWidth, screenHeight);  // 填滿整個視窗
         g.drawImage(background,0 ,0,null);
-        // 取用playerTank的圖片，位置並畫在視窗上
-        //g.drawImage(playerTank.getImage(), playerTank.getX(), playerTank.getY(), null); // 圖片X軸的位置，y軸的位置
-        //取代上面的方法
-        playerTank.draw(g);
 
-        // 畫出敵方坦克
-        for(Tank tank:enemyTanks){
-            tank.draw(g);
+        for (GameObject object: objects){
+            object.draw(g);
         }
-
-        for (Wall wall:walls){
-            wall.draw(g);
-        }
-
 
     }
 

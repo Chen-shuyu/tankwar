@@ -1,24 +1,21 @@
-package object;
+import object.GameObject;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class Tank {
-    int x;
-    int y;
+public class Tank extends GameObject {
     private Direction direction;
     private int speed;
     private boolean enemy;  //
 
 
-    public Tank(int x, int y, Direction direction) {
-        this(x,y,direction, false);
+    public Tank(int x, int y, Direction direction, Image[] image) {
+        this(x,y,direction, false,image);
     }
-    public Tank(int x, int y, Direction direction, boolean enemy) {
-        this.x = x;
-        this.y = y;
+    public Tank(int x, int y, Direction direction, boolean enemy, Image[] image) {
+        super(x, y, image);
         this.direction = direction;
-        speed = 5;
+        speed = 10;
         this.enemy = enemy;
     }
 
@@ -28,28 +25,6 @@ public class Tank {
         return speed;
     }
 
-    // 按照不同方向，更換坦克的圖片
-    public Image getImage() {
-        String name = enemy ? "etank":"itank";
-        if (direction == Direction.UP)
-            return new ImageIcon("assets/images/"+name+"U.png").getImage();
-        if (direction == Direction.DOWN)
-            return new ImageIcon("assets/images/"+name+"D.png").getImage();
-        if (direction == Direction.RIGHT)
-            return new ImageIcon("assets/images/"+name+"R.png").getImage();
-        if (direction == Direction.LEFT)
-            return new ImageIcon("assets/images/"+name+"L.png").getImage();
-        if (direction == Direction.RIGHT_UP)
-            return new ImageIcon("assets/images/"+name+"RU.png").getImage();
-        if (direction == Direction.RIGHT_DOWN)
-            return new ImageIcon("assets/images/"+name+"RD.png").getImage();
-        if (direction == Direction.LEFT_up)
-            return new ImageIcon("assets/images/"+name+"LU.png").getImage();
-        if (direction == Direction.LEFT_DOWN)
-            return new ImageIcon("assets/images/"+name+"LD.png").getImage();
-
-        return null;
-    }
 
     // 新增dirs boolean陣列，為了判斷上下左右四個方向
     private boolean[] dirs = new boolean[4];
@@ -90,6 +65,17 @@ public class Tank {
                 y += speed;
                 break;
         }
+        // 邊界偵測
+        if (x<0){
+            x=0;
+        }else if (x>TankGame.gameClient.getScreenWidth()-width){
+            x=TankGame.gameClient.getScreenWidth()-width;
+        }
+        if (y<0){
+            y=0;
+        }else if (y>TankGame.gameClient.getScreenHeight()-height){
+            y=TankGame.gameClient.getScreenHeight()-height;
+        }
     }
 
     // 利用dirs陣列填入的True和False，來判斷坦克的方向
@@ -111,7 +97,7 @@ public class Tank {
             determineDirection();
             move();
         }
-        g.drawImage(getImage(), x, y, null);
+        g.drawImage(image[direction.ordinal()], x, y, null);
     }
 
     // 增加停止的方法

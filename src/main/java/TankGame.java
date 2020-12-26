@@ -4,12 +4,12 @@ import java.awt.event.KeyEvent;
 
 //主視窗顯示與案件控制
 public class TankGame {
-
+    public static GameClient gameClient;
     public static void main(String[] args) {
         // 創建一個JFrame實體物件
         JFrame frame = new JFrame();
         // 呼叫GameClient (視窗寬,高)
-        GameClient gameClient = new GameClient(800, 600);
+        gameClient = new GameClient(800, 650);
         frame.add(gameClient);  // 利用frame.add 裝載GameClient
         frame.setTitle("坦克大戰");
         frame.setVisible(true);
