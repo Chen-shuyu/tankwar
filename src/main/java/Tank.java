@@ -4,9 +4,9 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Tank extends GameObject {
-    private Direction direction;
-    private int speed;
-    private boolean enemy;  //
+    protected Direction direction;
+    protected int speed;
+    protected boolean enemy;  //
 
 
     public Tank(int x, int y, Direction direction, Image[] image) {
@@ -112,7 +112,6 @@ public class Tank extends GameObject {
         boolean isCollision = false;
         for (GameObject gameObject : TankGame.gameClient.getGameObjects()) {
             if (gameObject != this && getRectangle().intersects(gameObject.getRectangle())) {
-                System.out.println("hit!");
                 // 碰撞後更新成上一次的位置
                 x = oldX;
                 y = oldY;
@@ -137,7 +136,18 @@ public class Tank extends GameObject {
         else if (!dirs[0] && !dirs[1] && !dirs[2] && dirs[3]) direction = Direction.RIGHT;
     }
 
+    //射出砲彈
+    public void fire(){
+        //Bullet bullet = new Bullet(x, y, direction, enemy,GameClient.bulletImage);
+        TankGame.gameClient.addGameObject(new Bullet(x+(width-GameClient.bulletImage[0].getWidth(null))/2,
+                y+(height-GameClient.bulletImage[0].getHeight(null))/2, direction, enemy,GameClient.bulletImage));
+    }
+
+
     public void draw(Graphics g) {
+        if (!alive){
+            return;
+        }
         // 如果有移動，就判斷方向，然後移動
         if (isRunning()) {
             determineDirection();

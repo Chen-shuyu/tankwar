@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 //主遊戲邏輯與圖形顯示
@@ -14,10 +15,9 @@ public class GameClient extends JComponent {
     private Image background;
 
     private Tank playerTank;
-    //private List<Tank> enemyTanks = new ArrayList<Tank>();  //敵方坦克
-    //private List<Wall> walls = new ArrayList<Wall>();  //敵方坦克
     private List<GameObject> gameObjects = new ArrayList<>(); //使用父類別進行集合類型宣告
     private boolean stop;
+    public static Image[] bulletImage= new Image[8];
 
 
     //預設遊戲畫面
@@ -70,6 +70,7 @@ public class GameClient extends JComponent {
         for (int i=0; i<iTankImage.length; i++){
             iTankImage[i] = Tool.getImage("itank"+sub[i]+".png");
             eTankImage[i] = Tool.getImage("etank"+sub[i]+".png");
+            bulletImage[i]=Tool.getImage("missile"+sub[i]+".png");
         }
 
         playerTank = new Tank(400, 90, Direction.DOWN,iTankImage);
@@ -100,6 +101,14 @@ public class GameClient extends JComponent {
             object.draw(g);
         }
 
+        // 使用迭代器進行移除
+        Iterator<GameObject> iterator = gameObjects.iterator();
+        while (iterator.hasNext()){
+            if(!(iterator.next()).isAlive()){
+                iterator.remove();
+            }
+        }
+        System.out.println(gameObjects.size());
     }
 
 
@@ -115,18 +124,15 @@ public class GameClient extends JComponent {
                 break;
             case KeyEvent.VK_DOWN:
                 dirs[1] = true;
-                //playerTank.setDirection(Direction.DOWN);
-                //playerTank.setY(playerTank.getY()+playerTank.getSpeed());
                 break;
             case KeyEvent.VK_LEFT:
                 dirs[2] = true;
-                //playerTank.setDirection(Direction.LEFT);
-                // playerTank.setX(playerTank.getX()+playerTank.getSpeed());
                 break;
             case KeyEvent.VK_RIGHT:
                 dirs[3] = true;
-                //playerTank.setDirection(Direction.RIGHT);
-                //playerTank.setX(playerTank.getX()-playerTank.getSpeed());
+                break;
+            case KeyEvent.VK_A:
+                playerTank.fire();
                 break;
         }
         //playerTank.move();      //將移動的增減新增到Tank中
@@ -149,6 +155,10 @@ public class GameClient extends JComponent {
                 dirs[3] = false;
                 break;
         }
+    }
+
+    public void addGameObject(GameObject object) {
+        gameObjects.add(object);
     }
     //repaint();  // 重新畫一次圖片，會自動呼叫paintComponent，最後因為使用執行續所以刪除
 }
