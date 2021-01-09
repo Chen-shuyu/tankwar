@@ -30,4 +30,14 @@ public class Wall extends GameObject {
             }
         }
     }
+
+    // 覆寫 Rectangle
+    // 讓每一個牆面都會被碰撞到
+    @Override
+    public Rectangle getRectangle() {
+        // 如果是水平的牆面，就把寬度乘上牆面的數量
+        // 如果是垂直了話，就把高度乘上牆面的數量
+        return horizontal ? new Rectangle(x, y, bricks*width, height):
+            new Rectangle(x, y, width, bricks*height);
+    }
 }

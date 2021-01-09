@@ -14,15 +14,15 @@ public class GameClient extends JComponent {
     private Image background;
 
     private Tank playerTank;
-    private List<Tank> enemyTanks = new ArrayList<Tank>();  //敵方坦克
-    private List<Wall> walls = new ArrayList<Wall>();  //敵方坦克
-    private List<GameObject> objects = new ArrayList<>(); //使用父類別進行集合類型宣告
+    //private List<Tank> enemyTanks = new ArrayList<Tank>();  //敵方坦克
+    //private List<Wall> walls = new ArrayList<Wall>();  //敵方坦克
+    private List<GameObject> gameObjects = new ArrayList<>(); //使用父類別進行集合類型宣告
     private boolean stop;
 
 
     //預設遊戲畫面
     GameClient() {
-        this(800, 800);
+        this(900, 900);
     }
 
     //設定畫面的大小
@@ -43,6 +43,11 @@ public class GameClient extends JComponent {
                 }
             }
         }).start();
+    }
+
+    // 回傳所有物件
+    public List<GameObject> getGameObjects() {
+        return gameObjects;
     }
 
     public int getScreenWidth() {
@@ -68,19 +73,19 @@ public class GameClient extends JComponent {
         }
 
         playerTank = new Tank(400, 90, Direction.DOWN,iTankImage);
-        objects.add(playerTank);
+        gameObjects.add(playerTank);
         // 敵方坦克
         for (int i =0; i<3; i++){
             for (int j=0; j<4; j++){
-                enemyTanks.add(new Tank(250+j*100,300+i*100,Direction.UP, true, eTankImage));
+                gameObjects.add(new Tank(250+j*100,300+i*100,Direction.UP, true, eTankImage));
             }
         }
-        objects.addAll(enemyTanks);
+        //objects.addAll(enemyTanks);
 
-        walls.add(new Wall(180, 150, true, 15,brickImage));
-        walls.add(new Wall(100, 150, false, 14,brickImage));
-        walls.add(new Wall(700, 150, false, 14,brickImage));
-        objects.addAll(walls);
+        gameObjects.add(new Wall(250, 150, true, 15,brickImage));
+        gameObjects.add(new Wall(150, 150, false, 14,brickImage));
+        gameObjects.add(new Wall(800, 150, false, 14,brickImage));
+        //objects.addAll(walls);
     }
 
     @Override
@@ -91,7 +96,7 @@ public class GameClient extends JComponent {
         g.fillRect(0, 0, screenWidth, screenHeight);  // 填滿整個視窗
         g.drawImage(background,0 ,0,null);
 
-        for (GameObject object: objects){
+        for (GameObject object: gameObjects){
             object.draw(g);
         }
 

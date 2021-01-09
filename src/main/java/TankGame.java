@@ -9,7 +9,7 @@ public class TankGame {
         // 創建一個JFrame實體物件
         JFrame frame = new JFrame();
         // 呼叫GameClient (視窗寬,高)
-        gameClient = new GameClient(800, 650);
+        gameClient = new GameClient(1000, 650);
         frame.add(gameClient);  // 利用frame.add 裝載GameClient
         frame.setTitle("坦克大戰");
         frame.setVisible(true);

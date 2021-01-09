@@ -10,15 +10,15 @@ public class Tank extends GameObject {
 
 
     public Tank(int x, int y, Direction direction, Image[] image) {
-        this(x,y,direction, false,image);
+        this(x, y, direction, false, image);
     }
+
     public Tank(int x, int y, Direction direction, boolean enemy, Image[] image) {
         super(x, y, image);
         this.direction = direction;
         speed = 10;
         this.enemy = enemy;
     }
-
 
 
     public int getSpeed() {
@@ -35,6 +35,10 @@ public class Tank extends GameObject {
 
     // 新增坦克move的方法
     public void move() {
+        // 記錄移動前的位置
+        oldX = x;
+        oldY = y;
+
         switch (direction) {
             case UP:
                 y -= speed;
@@ -65,18 +69,60 @@ public class Tank extends GameObject {
                 y += speed;
                 break;
         }
-        // 邊界偵測
-        if (x<0){
-            x=0;
-        }else if (x>TankGame.gameClient.getScreenWidth()-width){
-            x=TankGame.gameClient.getScreenWidth()-width;
-        }
-        if (y<0){
-            y=0;
-        }else if (y>TankGame.gameClient.getScreenHeight()-height){
-            y=TankGame.gameClient.getScreenHeight()-height;
-        }
+
+
     }
+
+    // 將原本放在move裡面的 碰撞邊界and碰撞到物件拿出來
+    // 因為不需要每次移動都同時做兩個偵測，所以為了偵測是碰撞到邊界or碰撞到物件
+    // 新增isCollisionBound 偵測碰裝邊界
+    // 新增isCollisionObject 偵測碰裝物件
+    // 新增collision 判斷是碰撞邊界還是物件
+    public boolean collision() {
+        boolean isCollision = false;
+        isCollision = isCollisionBound();
+        if (!isCollision) {
+            isCollision = isCollisionObject();
+        }
+        return isCollision;
+    }
+
+    // 邊界偵測
+    public boolean isCollisionBound() {
+        boolean isCollision = false;
+        if (x < 0) {
+            x = 0;
+            isCollision = true;
+        } else if (x > TankGame.gameClient.getScreenWidth() - width) {
+            x = TankGame.gameClient.getScreenWidth() - width;
+            isCollision = true;
+        }
+        if (y < 0) {
+            y = 0;
+            isCollision = true;
+        } else if (y > TankGame.gameClient.getScreenHeight() - height) {
+            y = TankGame.gameClient.getScreenHeight() - height;
+            isCollision = true;
+        }
+        return isCollision;
+    }
+
+    //  物件的碰撞
+    public boolean isCollisionObject() {
+        boolean isCollision = false;
+        for (GameObject gameObject : TankGame.gameClient.getGameObjects()) {
+            if (gameObject != this && getRectangle().intersects(gameObject.getRectangle())) {
+                System.out.println("hit!");
+                // 碰撞後更新成上一次的位置
+                x = oldX;
+                y = oldY;
+                isCollision = true;
+                break;
+            }
+        }
+        return isCollision;
+    }
+
 
     // 利用dirs陣列填入的True和False，來判斷坦克的方向
     private void determineDirection() {
@@ -96,6 +142,7 @@ public class Tank extends GameObject {
         if (isRunning()) {
             determineDirection();
             move();
+            collision();
         }
         g.drawImage(image[direction.ordinal()], x, y, null);
     }
@@ -110,6 +157,7 @@ public class Tank extends GameObject {
         }
         return false;
     }
+
 
     public int getX() {
         return x;
