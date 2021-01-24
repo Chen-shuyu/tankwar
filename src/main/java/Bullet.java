@@ -1,3 +1,4 @@
+import object.Direction;
 import object.GameObject;
 
 import java.awt.*;
@@ -5,7 +6,7 @@ import java.awt.*;
 public class Bullet extends Tank {
     public Bullet(int x, int y, Direction direction, boolean enemy, Image[] image) {
         super(x, y, direction, enemy, image);
-        speed = 15;
+        setSpeed(15);
     }
 
     @Override
@@ -15,48 +16,40 @@ public class Bullet extends Tank {
         }
         move();
         collision();
-        g.drawImage(image[direction.ordinal()], x, y, null);
+        g.drawImage(image[getDirection().ordinal()], x, y, null);
     }
 
-    @Override
-    public boolean isCollisionBound() {
-        if (super.isCollisionBound()) {
-            alive = false;
-            return true;
-        }
-        return false;
-    }
 
     @Override
-    public boolean collision() {
-        if (isCollisionBound()) {
-            alive = false;
-            return true;
-        }
-
-        boolean isCollision = false;
-        for (GameObject gameObject : TankGame.gameClient.getGameObjects()) {
-            // 判斷是否為子彈本身
-            if (gameObject == this) {
-                continue;
-            }
-            if (gameObject instanceof Tank ) {
-                if (enemy == ((Tank) gameObject).enemy) {
+    public boolean CollisionObject() {
+        boolean isCollision =false;
+        for (GameObject object: TankGame.getGameClient().getObjects()){
+            if (object instanceof Tank){
+                if (((Tank) object).isEnemy()==isEnemy()){
                     continue;
                 }
             }
 
-            // 判斷是否碰撞到物件
-            if (getRectangle().intersects(gameObject.getRectangle())) {
-                // 是否碰撞到坦克
-                if (gameObject instanceof Tank ) {
-                    ((Tank) gameObject).setAlive(false);
+            if (object!= this && getRectangle().intersects(object.getRectangle())){
+                if (object instanceof Tank){
+                    ((Tank) object).getHurt(1);  //讓坦克消失
                 }
-                isCollision = true;
-                alive = false;
-                break;
+                isCollision=true;
             }
         }
         return isCollision;
+    }
+
+    public boolean collision(){
+        boolean isCollision = CollisionBound();
+
+        if (!isCollision){
+            isCollision= CollisionObject();
+        }
+        if (isCollision){
+            alive = false;  //將子彈本身設定為False
+            return true;
+        }
+        return false;
     }
 }

@@ -1,3 +1,5 @@
+package object;
+
 public enum Direction {
     UP,
     DOWN,
@@ -5,6 +7,6 @@ public enum Direction {
     RIGHT,
     RIGHT_UP,
     RIGHT_DOWN,
-    LEFT_up,
+    LEFT_UP,
     LEFT_DOWN;
 }

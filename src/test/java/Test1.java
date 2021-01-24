@@ -1,6 +1,8 @@
+import object.Direction;
+
 public class Test1 {
     public static void main(String[] args) {
-        //Direction direction;
+        //object.Direction direction;
 
         for(Direction direction:Direction.values()) {
             System.out.println(direction.ordinal());

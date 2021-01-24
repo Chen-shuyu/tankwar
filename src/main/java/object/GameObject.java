@@ -10,7 +10,15 @@ public abstract class GameObject {
     protected int height;
     protected int oldX;
     protected int oldY;
-    public boolean alive;
+    protected boolean alive;
+
+    public void setAlive(boolean alive) {
+        this.alive = alive;
+    }
+    public boolean isAlive() {
+        return alive;
+    }
+
 
 
     public GameObject(int x, int y, Image[] image) {
@@ -22,13 +30,7 @@ public abstract class GameObject {
         alive=true;
     }
 
-    public boolean isAlive() {
-        return alive;
-    }
 
-    public void setAlive(boolean alive) {
-        this.alive = alive;
-    }
 
     // 回傳物件所有的X,Y位置和長寬
     public Rectangle getRectangle(){
